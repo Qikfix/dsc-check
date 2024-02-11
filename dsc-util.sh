@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# 
+# License ....: GPLv3
+# Purpose ....: Help with some pending features on discovery tool
+# Upstream ...: https://github.com/Qikfix/dsc-util
+# Developer ..: Takae Harrington <email_here>
+#               Waldirio Pinheiro <waldirio@gmail.com>
+# 
+
 ### Global Variable ###
 LATEST_IMAGE=discovery-server-rhel9
 REG_PATH=registry.redhat.io/discovery
@@ -25,12 +33,6 @@ main_menu()
       echo "$0 check_version"
       ;;
   esac
-
-#  if [ "$1" == "" ]; then
-#    echo "Please, pass the desired parameter"
-#    echo ""
-#    echo "$0 check_version"
-#  fi
 }
 
 check_login(){
