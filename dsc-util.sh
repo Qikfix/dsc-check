@@ -72,7 +72,7 @@ check_current(){
   if [ `podman images | grep $LATEST_IMAGE | wc -l` -eq 0 ] || [ $LATEST_VER != $CURRENT_VER ]
   then 
     echo "Your current version is $CURRENT_VER and the latest is $LATEST_VER"
-    echo "Please update your disvocery tool to the latest by using https://access.redhat.com/articles/7036146"
+    echo "Please update your discovery tool to the latest by using https://access.redhat.com/articles/7036146"
   else
     echo "Your current version is $CURRENT_VER and the latest is $LATEST_VER"
     echo "The Discovery tool is up-to-date."
