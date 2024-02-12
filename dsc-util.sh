@@ -13,7 +13,7 @@ main_menu()
 {
   case $1 in
     check_version)
-      echo "checking"
+      #echo "checking"
       check_login
       get_current_ver
       get_latest_ver
