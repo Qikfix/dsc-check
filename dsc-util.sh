@@ -4,7 +4,7 @@
 # License ....: GPLv3
 # Purpose ....: Help with some pending features on discovery tool
 # Upstream ...: https://github.com/Qikfix/dsc-util
-# Developer ..: Takae Harrington <email_here>
+# Developer ..: Takae Harrington <takae@takaeharrington.com>
 #               Waldirio Pinheiro <waldirio@gmail.com>
 # 
 
