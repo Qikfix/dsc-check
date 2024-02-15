@@ -87,7 +87,7 @@ get_latest_ver(){
   
   if [ "$1" == "" ]; then
     echo "connected environment"
-
+    echo
     if ( ! podman search $REG_PATH/$LATEST_IMAGE --list-tags > /dev/null 2>&1 )
     then
       echo "Command 'podman search $REG_PATH/$LATEST_IMAGE --list-tags' is erroring"
