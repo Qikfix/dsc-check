@@ -21,10 +21,15 @@ main_menu()
 {
   case $1 in
     check_version)
-      #echo "checking"
       check_login
       get_current_ver
       get_latest_ver
+      check_current
+      ;;
+    check_version_disc)
+      #check_login
+      get_current_ver
+      get_latest_ver disconnected
       check_current
       ;;
     stop-pod)
@@ -43,10 +48,11 @@ main_menu()
     *)
       echo "Please, pass the desired parameter"
       echo ""
-      echo "$0 check_version    # Check the current version and also for update"
-      echo "$0 stop-pod         # Stop the 'discovery-pod' pod"
-      echo "$0 start-pod        # Start the 'discovery-pod' pod"
-      echo "$0 get-logs         # Get the logs from discovery and DB"
+      echo "$0 check_version         # Check the current version and also for update"
+      echo "$0 check_version_disc    # Check the current version and also for update, on disconnected environment"
+      echo "$0 stop-pod              # Stop the 'discovery-pod' pod"
+      echo "$0 start-pod             # Start the 'discovery-pod' pod"
+      echo "$0 get-logs              # Get the logs from discovery and DB"
       ;;
   esac
 }
@@ -78,14 +84,48 @@ get_current_ver(){
 }
 
 get_latest_ver(){
-   
-  if ( ! podman search $REG_PATH/$LATEST_IMAGE --list-tags > /dev/null 2>&1 )
-  then
-    echo "Command 'podman search $REG_PATH/$LATEST_IMAGE --list-tags' is erroring"
-    echo "Possibly there is an outage on Red Hat side. Please check https://status.redhat.com/ or try the script later"
-    exit 1; 
+  
+  if [ "$1" == "" ]; then
+    echo "connected environment"
+
+    if ( ! podman search $REG_PATH/$LATEST_IMAGE --list-tags > /dev/null 2>&1 )
+    then
+      echo "Command 'podman search $REG_PATH/$LATEST_IMAGE --list-tags' is erroring"
+      echo "Possibly there is an outage on Red Hat side. Please check https://status.redhat.com/ or try the script later"
+      exit 1; 
+    fi
+    LATEST_VER=`podman search $REG_PATH/$LATEST_IMAGE --list-tags | cut -d" " -f3 | sort -rn | head -n1 | cut -d"-" -f1`
+  else
+    echo "disconnected environment"
+    echo
+    echo "On any connected RHEL, please proceed as below"
+    echo "podman login registry.redhat.io"
+    echo "podman search registry.redhat.io/discovery/discovery-server-rhel9 --list-tags >/tmp/discovery_tags.txt"
+    echo
+    echo "once you get the file created, copy and save this file on the discovery server as '/root/discovery_tags.txt'"
+    echo
+    echo -n "Do you have already the file '/root/discovery_tags.txt'? (y/n) "
+    read answer
+    case $answer in
+      y|Y)
+	if [ -f /root/discovery_tags.txt ]; then
+          LATEST_VER=`cat /root/discovery_tags.txt | cut -d" " -f3 | sort -rn | head -n1 | cut -d"-" -f1`
+        else
+          echo "The file '/root/discovery_tags.txt' is not present"
+	  exit 1
+	fi
+        ;;
+      n|N)
+        echo "Please, execute the steps above and try again."
+	exit 1
+        ;;
+      *)
+        echo "Invalid option."
+	exit 1
+        ;;
+    esac
+
   fi
-  LATEST_VER=`podman search $REG_PATH/$LATEST_IMAGE --list-tags | cut -d" " -f3 | sort -rn | head -n1 | cut -d"-" -f1`
 }
 
 check_current(){
@@ -137,7 +177,3 @@ get_logs_func(){
 ###  Main ###
 
 main_menu $1
-#check_login
-#get_current_ver
-#get_latest_ver
-#check_current
