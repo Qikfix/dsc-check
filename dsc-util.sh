@@ -37,12 +37,16 @@ main_menu()
       podman pod start discovery-pod
       podman ps -p
       ;;
+    get-logs)
+      get_logs_func
+      ;;
     *)
       echo "Please, pass the desired parameter"
       echo ""
       echo "$0 check_version    # Check the current version and also for update"
       echo "$0 stop-pod         # Stop the 'discovery-pod' pod"
       echo "$0 start-pod        # Start the 'discovery-pod' pod"
+      echo "$0 get-logs         # Get the logs from discovery and DB"
       ;;
   esac
 }
@@ -96,7 +100,7 @@ check_current(){
 
 }
 
-get_logs(){
+get_logs_func(){
   # get the logs from host mount for the disvocery and dsc-db
  
   # remove previous file if exist
