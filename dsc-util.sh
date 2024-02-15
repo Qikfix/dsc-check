@@ -13,6 +13,7 @@ LATEST_IMAGE=discovery-server-rhel9
 REG_PATH=registry.redhat.io/discovery
 CURRENT_VER=""
 LATEST_VER=""
+DISCOVERY_OFFLINE_FILE="/root/discovery_tags.txt"
 ### End of Global Variable ###
 
 ### Function declaration ### 
@@ -27,7 +28,6 @@ main_menu()
       check_current
       ;;
     check_version_disc)
-      #check_login
       get_current_ver
       get_latest_ver disconnected
       check_current
@@ -102,16 +102,16 @@ get_latest_ver(){
     echo "podman login registry.redhat.io"
     echo "podman search registry.redhat.io/discovery/discovery-server-rhel9 --list-tags >/tmp/discovery_tags.txt"
     echo
-    echo "once you get the file created, copy and save this file on the discovery server as '/root/discovery_tags.txt'"
+    echo "once you get the file created, copy and save this file on the discovery server as '$DISCOVERY_OFFLINE_FILE'"
     echo
-    echo -n "Do you have already the file '/root/discovery_tags.txt'? (y/n) "
+    echo -n "Do you have already the file '$DISCOVERY_OFFLINE_FILE'? (y/n) "
     read answer
     case $answer in
       y|Y)
-	if [ -f /root/discovery_tags.txt ]; then
-          LATEST_VER=`cat /root/discovery_tags.txt | cut -d" " -f3 | sort -rn | head -n1 | cut -d"-" -f1`
+	if [ -f $DISCOVERY_OFFLINE_FILE ]; then
+          LATEST_VER=`cat $DISCOVERY_OFFLINE_FILE | cut -d" " -f3 | sort -rn | head -n1 | cut -d"-" -f1`
         else
-          echo "The file '/root/discovery_tags.txt' is not present"
+          echo "The file '$DISCOVERY_OFFLINE_FILE' is not present"
 	  exit 1
 	fi
         ;;
