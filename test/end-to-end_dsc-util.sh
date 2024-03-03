@@ -17,134 +17,131 @@ check_login()
 
 discovery_current_state()
 {
-	mkdir -pv "${HOME}"/.local/share/discovery/data
-	mkdir -pv "${HOME}"/.local/share/discovery/log
-	mkdir -pv "${HOME}"/.local/share/discovery/sshkeys
-	
-	podman pull registry.redhat.io/rhel8/postgresql-12:latest
-	podman pull registry.redhat.io/discovery/discovery-server-rhel9:latest
-	
-	podman run --name dsc-db \
-	--pod new:discovery-pod \
-	--publish 9443:443 \
-	--restart on-failure \
-	-e POSTGRESQL_USER=dsc \
-	-e POSTGRESQL_PASSWORD=server_administrator_password \
-	-e POSTGRESQL_DATABASE=dsc-db \
-	-v dsc-data:/var/lib/pgsql/data \
-	-d registry.redhat.io/rhel8/postgresql-12:latest
-	
-	podman run \
-	--name discovery \
-	--restart on-failure \
-	--pod discovery-pod \
-	-e DJANGO_DEBUG=False \
-	-e NETWORK_CONNECT_JOB_TIMEOUT=60 \
-	-e NETWORK_INSPECT_JOB_TIMEOUT=600 \
-	-e PRODUCTION=True \
-	-e QPC_DBMS_HOST=localhost \
-	-e QPC_DBMS_PASSWORD=server_administrator_password \
-	-e QPC_DBMS_USER=dsc \
-	-e QPC_DBMS_DATABASE=dsc-db \
-	-e QPC_SERVER_PASSWORD=server_administrator_password \
-	-e QPC_SERVER_TIMEOUT=120 \
-	-e QPC_SERVER_USERNAME=admin \
-	-e QPC_SERVER_USER_EMAIL=admin@example.com \
-	-v "${HOME}"/.local/share/discovery/data/:/var/data:z \
-	-v "${HOME}"/.local/share/discovery/log/:/var/log:z \
-	-v "${HOME}"/.local/share/discovery/sshkeys/:/sshkeys:z \
-	-d registry.redhat.io/discovery/discovery-server-rhel9:latest
-
-
+  mkdir -pv "${HOME}"/.local/share/discovery/data
+  mkdir -pv "${HOME}"/.local/share/discovery/log
+  mkdir -pv "${HOME}"/.local/share/discovery/sshkeys
+  
+  podman pull registry.redhat.io/rhel8/postgresql-12:latest
+  podman pull registry.redhat.io/discovery/discovery-server-rhel9:latest
+  
+  podman run --name dsc-db \
+  --pod new:discovery-pod \
+  --publish 9443:443 \
+  --restart on-failure \
+  -e POSTGRESQL_USER=dsc \
+  -e POSTGRESQL_PASSWORD=server_administrator_password \
+  -e POSTGRESQL_DATABASE=dsc-db \
+  -v dsc-data:/var/lib/pgsql/data \
+  -d registry.redhat.io/rhel8/postgresql-12:latest
+  
+  podman run \
+  --name discovery \
+  --restart on-failure \
+  --pod discovery-pod \
+  -e DJANGO_DEBUG=False \
+  -e NETWORK_CONNECT_JOB_TIMEOUT=60 \
+  -e NETWORK_INSPECT_JOB_TIMEOUT=600 \
+  -e PRODUCTION=True \
+  -e QPC_DBMS_HOST=localhost \
+  -e QPC_DBMS_PASSWORD=server_administrator_password \
+  -e QPC_DBMS_USER=dsc \
+  -e QPC_DBMS_DATABASE=dsc-db \
+  -e QPC_SERVER_PASSWORD=server_administrator_password \
+  -e QPC_SERVER_TIMEOUT=120 \
+  -e QPC_SERVER_USERNAME=admin \
+  -e QPC_SERVER_USER_EMAIL=admin@example.com \
+  -v "${HOME}"/.local/share/discovery/data/:/var/data:z \
+  -v "${HOME}"/.local/share/discovery/log/:/var/log:z \
+  -v "${HOME}"/.local/share/discovery/sshkeys/:/sshkeys:z \
+  -d registry.redhat.io/discovery/discovery-server-rhel9:latest
 }
 
 discovery_previous_state()
 {
-	# Discovery version 1.4.6
-	# added _123 to the password, once it was failing during the update
-
-	mkdir -p "${HOME}"/.local/share/discovery/data
-	mkdir -p "${HOME}"/.local/share/discovery/log
-	mkdir -p "${HOME}"/.local/share/discovery/sshkeys
-	
-	podman pull registry.redhat.io/rhel8/postgresql-12:latest
-	podman pull registry.redhat.io/discovery/discovery-server-rhel9:1.4.6
-	
-	podman run --name dsc-db \
-	--pod new:discovery-pod \
-	--publish 9443:443 \
-	--restart on-failure \
-	-e POSTGRESQL_USER=dsc \
-	-e POSTGRESQL_PASSWORD=server_administrator_password_123 \
-	-e POSTGRESQL_DATABASE=dsc-db \
-	-v dsc-data:/var/lib/pgsql/data \
-	-d registry.redhat.io/rhel8/postgresql-12:latest
-	
-	podman run \
-	--name discovery \
-	--restart on-failure \
-	--pod discovery-pod \
-	-e DJANGO_DEBUG=False \
-	-e NETWORK_CONNECT_JOB_TIMEOUT=60 \
-	-e NETWORK_INSPECT_JOB_TIMEOUT=600 \
-	-e PRODUCTION=True \
-	-e QPC_DBMS_HOST=localhost \
-	-e QPC_DBMS_PASSWORD=server_administrator_password_123 \
-	-e QPC_DBMS_USER=dsc \
-	-e QPC_DBMS_DATABASE=dsc-db \
-	-e QPC_SERVER_PASSWORD=server_administrator_password_123 \
-	-e QPC_SERVER_TIMEOUT=120 \
-	-e QPC_SERVER_USERNAME=admin \
-	-e QPC_SERVER_USER_EMAIL=admin@example.com \
-	-v "${HOME}"/.local/share/discovery/data/:/var/data:z \
-	-v "${HOME}"/.local/share/discovery/log/:/var/log:z \
-	-v "${HOME}"/.local/share/discovery/sshkeys/:/sshkeys:z \
-	-d registry.redhat.io/discovery/discovery-server-rhel9:1.4.6
-
+  # Discovery version 1.4.6
+  # added _123 to the password, once it was failing during the update
+  
+  mkdir -p "${HOME}"/.local/share/discovery/data
+  mkdir -p "${HOME}"/.local/share/discovery/log
+  mkdir -p "${HOME}"/.local/share/discovery/sshkeys
+  
+  podman pull registry.redhat.io/rhel8/postgresql-12:latest
+  podman pull registry.redhat.io/discovery/discovery-server-rhel9:1.4.6
+  
+  podman run --name dsc-db \
+  --pod new:discovery-pod \
+  --publish 9443:443 \
+  --restart on-failure \
+  -e POSTGRESQL_USER=dsc \
+  -e POSTGRESQL_PASSWORD=server_administrator_password_123 \
+  -e POSTGRESQL_DATABASE=dsc-db \
+  -v dsc-data:/var/lib/pgsql/data \
+  -d registry.redhat.io/rhel8/postgresql-12:latest
+  
+  podman run \
+  --name discovery \
+  --restart on-failure \
+  --pod discovery-pod \
+  -e DJANGO_DEBUG=False \
+  -e NETWORK_CONNECT_JOB_TIMEOUT=60 \
+  -e NETWORK_INSPECT_JOB_TIMEOUT=600 \
+  -e PRODUCTION=True \
+  -e QPC_DBMS_HOST=localhost \
+  -e QPC_DBMS_PASSWORD=server_administrator_password_123 \
+  -e QPC_DBMS_USER=dsc \
+  -e QPC_DBMS_DATABASE=dsc-db \
+  -e QPC_SERVER_PASSWORD=server_administrator_password_123 \
+  -e QPC_SERVER_TIMEOUT=120 \
+  -e QPC_SERVER_USERNAME=admin \
+  -e QPC_SERVER_USER_EMAIL=admin@example.com \
+  -v "${HOME}"/.local/share/discovery/data/:/var/data:z \
+  -v "${HOME}"/.local/share/discovery/log/:/var/log:z \
+  -v "${HOME}"/.local/share/discovery/sshkeys/:/sshkeys:z \
+  -d registry.redhat.io/discovery/discovery-server-rhel9:1.4.6
 }
 
 discovery_old_version_diff_path()
 {
-	# Discovery version 1.4.4
-	# added _123 to the password, once it was failing during the update
-
-	mkdir -pv /var/discovery/server/volumes/data
-	mkdir -pv /var/discovery/server/volumes/log
-	mkdir -pv /var/discovery/server/volumes/sshkeys
-	
-	podman pull registry.redhat.io/rhel8/postgresql-12:latest
-	podman pull registry.redhat.io/discovery/discovery-server-rhel9:1.4.4
-	
-	podman run --name dsc-db \
-	--pod new:discovery-pod \
-	--publish 9443:443 \
-	--restart on-failure \
-	-e POSTGRESQL_USER=dsc \
-	-e POSTGRESQL_PASSWORD=server_administrator_password_123 \
-	-e POSTGRESQL_DATABASE=dsc-db \
-	-v dsc-data:/var/lib/pgsql/data \
-	-d registry.redhat.io/rhel8/postgresql-12:latest
-	
-	podman run \
-	--name discovery \
-	--restart on-failure \
-	--pod discovery-pod \
-	-e DJANGO_DEBUG=False \
-	-e NETWORK_CONNECT_JOB_TIMEOUT=60 \
-	-e NETWORK_INSPECT_JOB_TIMEOUT=600 \
-	-e PRODUCTION=True \
-	-e QPC_DBMS_HOST=localhost \
-	-e QPC_DBMS_PASSWORD=server_administrator_password \
-	-e QPC_DBMS_USER=dsc \
-	-e QPC_DBMS_DATABASE=dsc-db \
-	-e QPC_SERVER_PASSWORD=server_administrator_password \
-	-e QPC_SERVER_TIMEOUT=120 \
-	-e QPC_SERVER_USERNAME=admin \
-	-e QPC_SERVER_USER_EMAIL=admin@example.com \
-	-v /var/discovery/server/volumes/data/:/var/data:z \
-	-v /var/discovery/server/volumes/log/:/var/log:z \
-	-v /var/discovery/server/volumes/sshkeys/:/sshkeys:z \
-	-d registry.redhat.io/discovery/discovery-server-rhel9:1.4.4
+  # Discovery version 1.4.4
+  # added _123 to the password, once it was failing during the update
+  
+  mkdir -pv /var/discovery/server/volumes/data
+  mkdir -pv /var/discovery/server/volumes/log
+  mkdir -pv /var/discovery/server/volumes/sshkeys
+  
+  podman pull registry.redhat.io/rhel8/postgresql-12:latest
+  podman pull registry.redhat.io/discovery/discovery-server-rhel9:1.4.4
+  
+  podman run --name dsc-db \
+  --pod new:discovery-pod \
+  --publish 9443:443 \
+  --restart on-failure \
+  -e POSTGRESQL_USER=dsc \
+  -e POSTGRESQL_PASSWORD=server_administrator_password_123 \
+  -e POSTGRESQL_DATABASE=dsc-db \
+  -v dsc-data:/var/lib/pgsql/data \
+  -d registry.redhat.io/rhel8/postgresql-12:latest
+  
+  podman run \
+  --name discovery \
+  --restart on-failure \
+  --pod discovery-pod \
+  -e DJANGO_DEBUG=False \
+  -e NETWORK_CONNECT_JOB_TIMEOUT=60 \
+  -e NETWORK_INSPECT_JOB_TIMEOUT=600 \
+  -e PRODUCTION=True \
+  -e QPC_DBMS_HOST=localhost \
+  -e QPC_DBMS_PASSWORD=server_administrator_password \
+  -e QPC_DBMS_USER=dsc \
+  -e QPC_DBMS_DATABASE=dsc-db \
+  -e QPC_SERVER_PASSWORD=server_administrator_password \
+  -e QPC_SERVER_TIMEOUT=120 \
+  -e QPC_SERVER_USERNAME=admin \
+  -e QPC_SERVER_USER_EMAIL=admin@example.com \
+  -v /var/discovery/server/volumes/data/:/var/data:z \
+  -v /var/discovery/server/volumes/log/:/var/log:z \
+  -v /var/discovery/server/volumes/sshkeys/:/sshkeys:z \
+  -d registry.redhat.io/discovery/discovery-server-rhel9:1.4.4
 }
 
 discovery_not_installed()
@@ -199,7 +196,6 @@ discovery_not_installed()
   fi
   echo "---" &>>$LOG
   echo &>>$LOG
- 
 }
 
 
