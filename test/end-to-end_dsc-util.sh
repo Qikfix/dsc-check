@@ -202,14 +202,28 @@ discovery_not_installed()
 # To confirm that I'm using an account with access to registry.redhat.io
 check_login
 
+# --- Scenario 1 ---
 # Total discovery cleanup on the local machine
 discovery_not_installed
 
 # Discovery on the latest version
 discovery_current_state
+# --- End of Scenario 1 ---
+
+
+# --- Scenario 2 ---
+# Total discovery cleanup on the local machine
+# discovery_not_installed
 
 # Discovery on version 1.4.6
 # discovery_previous_state
+# --- End of Scenario 2 ---
+
+
+# --- Scenario 3 ---
+# Total discovery cleanup on the local machine
+# discovery_not_installed
 
 # Discovery on version 1.4.4 and diff path for the files
 # discovery_old_version_diff_path
+# --- End of Scenario 3 ---
