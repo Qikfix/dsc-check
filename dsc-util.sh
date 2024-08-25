@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# 
+#
 # License ....: GPLv3
 # Purpose ....: Help with some pending features on discovery tool
 # Upstream ...: https://github.com/Qikfix/dsc-util
 # Developer ..: Takae Harrington <takae@takaeharrington.com>
 #               Waldirio Pinheiro <waldirio@gmail.com>
-# 
+#
 
 ### Global Variable ###
 LATEST_IMAGE=discovery-server-rhel9
 REG_PATH=registry.redhat.io/discovery
-LATEST_PSQL_IMAGE=registry.redhat.io/rhel8/postgresql-12:latest
+LATEST_PSQL_IMAGE=registry.redhat.io/rhel9/postgresql-15:latest
 HOST_MOUNT_DIR="${HOME}"/.local/share/discovery
 CURRENT_MOUNT_DIR=""
 CURRENT_VER=""
@@ -22,7 +22,7 @@ NEW_PASS=""
 INSTALLED=1
 ### End of Global Variable ###
 
-### Function declaration ### 
+### Function declaration ###
 
 main_menu()
 {
@@ -63,7 +63,7 @@ main_menu()
       get_latest_ver
       check_current no_message
       check_passwd
-      pull_latest 
+      pull_latest
       do_install_func
       ;;
     do-install)
@@ -75,7 +75,7 @@ main_menu()
       set_passwd
       pull_latest
       do_install_func
-      ;; 
+      ;;
     do-chpass-update)
       pre_check no_exit
       check_login
@@ -127,8 +127,8 @@ pre_check(){
 
 check_login(){
   # exit out the script if not login to registry.redhat.io
-  timeout --foreground -k 1 5 podman login registry.redhat.io > /dev/null 2>&1 
-  if [ $? != 0 ] 
+  timeout --foreground -k 1 5 podman login registry.redhat.io > /dev/null 2>&1
+  if [ $? != 0 ]
   then
     echo "Please login registry.redhat.io before running this script."
     echo "command is 'podman login registry.redhat.io' to login"
@@ -137,7 +137,7 @@ check_login(){
 }
 
 get_current_ver(){
-  
+
   if [[ $INSTALLED = 1 ]]
   then
     CURRENT_VER=$(podman inspect discovery -f '{{.Config.Labels.version}}')
@@ -146,7 +146,7 @@ get_current_ver(){
 }
 
 get_latest_ver(){
-  
+
   if [ "$1" == "" ]; then
     echo "connected environment"
     echo
@@ -154,7 +154,7 @@ get_latest_ver(){
     then
       echo "Command 'podman search $REG_PATH/$LATEST_IMAGE --list-tags' is erroring"
       echo "Possibly there is an outage on Red Hat side. Please check https://status.redhat.com/ or try the script later"
-      exit 1; 
+      exit 1;
     fi
     LATEST_VER=`podman search $REG_PATH/$LATEST_IMAGE --list-tags | cut -d" " -f3 | sort -rn | head -n1 | cut -d"-" -f1`
   else
@@ -212,13 +212,13 @@ check_current(){
 
 get_logs_func(){
   # get the logs from host mount for the disvocery and dsc-db
- 
+
   # remove previous file if exist
   if [ -e /tmp/dsctool_* ]
   then
     rm -f /tmp/dsctool_*
   fi
- 
+
   # getting host mount from the discovery & dsc-db container
   declare -a HOST_MOUNT
   i=0
@@ -226,14 +226,14 @@ get_logs_func(){
   do
   HOST_MOUNT[$i]=`podman inspect discovery --format="{{ (index .Mounts $i).Source}}"`
   i=$(( $i + 1 ))
-  done 
- 
-  HOST_MOUNT[$i]=`podman inspect dsc-db --format="{{ (index .Mounts 0).Source}}"` 
+  done
+
+  HOST_MOUNT[$i]=`podman inspect dsc-db --format="{{ (index .Mounts 0).Source}}"`
   # echo ${HOST_MOUNT[@]}
   tar -czvf /tmp/dsctool_`date +"%m%d%Y"`.tar.gz ${HOST_MOUNT[@]} &> /dev/null
   if [ $? -ne 0 ] || [ ! -e /tmp/dsctool_* ]
   then
-    echo "There is a problem and the log file did not get created" 
+    echo "There is a problem and the log file did not get created"
     echo "Please run the command manually to observe the error"
     echo "Command: 'tar -czvf /tmp/dsctool_`date +"%m%d%Y"`.tar.gz ${HOST_MOUNT[@]}'"
   else
@@ -258,26 +258,26 @@ check_passwd(){
 
   read -p "If your current password does not meet the above, please type 'q' to quit or 'c' to continue: " USER_REPLY
 
-  case $USER_REPLY in 
-	q|Q) 
+  case $USER_REPLY in
+	q|Q)
            echo "Run ./dsc-util.sh do-chpass-update to change the password and get the latest"
            exit 1
    	   ;;
         c|C)
            ;;
         *)
-           echo "Invalid repsonse" 
+           echo "Invalid repsonse"
            echo
            check_passwd
            ;;
   esac
- 
-  # CURRENT_PASS=`podman inspect discovery -f "{{ (index .Config.Env 22) }}" | cut -d"=" -f2`  
+
+  # CURRENT_PASS=`podman inspect discovery -f "{{ (index .Config.Env 22) }}" | cut -d"=" -f2`
   CURRENT_PASS=`podman inspect discovery | grep  QPC_SERVER_PASSWORD | sort -u | cut -d"=" -f2 | cut -d\" -f1`
   #echo "current passwd length is ${#CURRENT_PASS}"
   #echo "current pass is $CURRENT_PASS"
 
-  
+
   if [ ${#CURRENT_PASS} -lt 10 ]
   then
      echo "Your current password length is less than 10"
@@ -297,8 +297,8 @@ passwd_requirement(){
   echo "- cannot be the previously provided Discovery default passwords"
   echo "- cannot be numeric only"
   echo
-  echo "*** this script will only check the length of the password ***" 
-  echo "*** Any missing requirement causes the upgrade/installation failure ***" 
+  echo "*** this script will only check the length of the password ***"
+  echo "*** Any missing requirement causes the upgrade/installation failure ***"
   echo
 }
 
@@ -312,22 +312,22 @@ set_passwd(){
 
   if [[ "$NEW_PASS" != "$CONFIRM_PASS" ]]
   then
-    echo 
+    echo
     echo "FAIL: Password does not match - Try again"
-    exit 1  
+    exit 1
   fi
 
   if [ ${#NEW_PASS} -lt 10 ]
   then
     echo
-    echo "FAIL: The password does not meet the requirement of minimum 10 characters - Try again" 
-    exit 1 
+    echo "FAIL: The password does not meet the requirement of minimum 10 characters - Try again"
+    exit 1
   fi
 }
 
 pull_latest(){
   # download the latest images
-  echo   
+  echo
   podman pull $REG_PATH/$LATEST_IMAGE
   podman pull $LATEST_PSQL_IMAGE
 
@@ -342,8 +342,8 @@ do_install_func(){
     CURRENT_MOUNT_DIR=`podman inspect discovery  --format="{{ (index .Mounts 0).Source}}" | cut -d"/" -f1,2,3,4,5`
   fi
 
-    echo  
-    echo "Starting..." 
+    echo
+    echo "Starting..."
 
   # stop discovery-pod and remove discovery container
   podman pod stop discovery-pod 2> /dev/null
@@ -363,7 +363,7 @@ do_install_func(){
     -e POSTGRESQL_PASSWORD=$CURRENT_PASS \
     -e POSTGRESQL_DATABASE=dsc-db \
     -v dsc-data:/var/lib/pgsql/data \
-    -d $LATEST_PSQL_IMAGE 
+    -d $LATEST_PSQL_IMAGE
   fi
 
   if [[ ! -d $HOST_MOUNT_DIR/data ]] || [[ ! -d $HOST_MOUNT_DIR/log ]] || [[ ! -d $HOST_MOUNT_DIR/sshkeys ]]
@@ -401,26 +401,26 @@ do_install_func(){
   -v $HOST_MOUNT_DIR/sshkeys/:/sshkeys:z \
   -d $REG_PATH/$LATEST_IMAGE
 
-  # restating the discovery pod 
+  # restating the discovery pod
   podman pod restart discovery-pod
 
   sleep 5
 
   # check if the container started successfully.
- 
-  if [ `podman ps | grep discovery | wc -l` -eq 0 ] 
+
+  if [ `podman ps | grep discovery | wc -l` -eq 0 ]
   then
     echo "Discovery container did not start, please check the log by 'podman logs discovery' for any errors"
   elif [ `podman ps | grep dsc-db | wc -l` -eq 0 ]
   then
     echo "Discovery database did not start, please check the log by 'podman logs dsc-db' for any errors"
   else
-    echo "Discovery tool is up-to-date. Please login the web ui with 'https://$(hostname):9443' " 
+    echo "Discovery tool is up-to-date. Please login the web ui with 'https://$(hostname):9443' "
   fi
 
 }
 
-### End of Function declaration ### 
+### End of Function declaration ###
 
 ###  Main ###
 
