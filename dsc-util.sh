@@ -211,9 +211,9 @@ check_current(){
 }
 
 get_logs_func(){
-  # get the logs from host mount for the disvocery and dsc-db
+  # get the logs from host mount for the discovery and dsc-db
 
-  # remove previous file if exist
+  # remove the previous file if it exists
   if [ -e /tmp/dsctool_* ]
   then
     rm -f /tmp/dsctool_*
@@ -242,7 +242,7 @@ get_logs_func(){
 }
 
 check_passwd(){
-  # check and notify the strick passwort requirement
+  # check and notify the strict password requirement
   # the below 2 lines are for future enhancement if allows for different password
 
   if [[ $INSTALLED = 0 ]]
@@ -401,7 +401,7 @@ do_install_func(){
   -v $HOST_MOUNT_DIR/sshkeys/:/sshkeys:z \
   -d $REG_PATH/$LATEST_IMAGE
 
-  # restating the discovery pod
+  # restarting the discovery pod
   podman pod restart discovery-pod
 
   sleep 5
